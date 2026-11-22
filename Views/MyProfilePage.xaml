@@ -5,336 +5,237 @@
     x:Class="StudentInformationSystemMobile.Views.MyProfilePage"
     Title="CS Student Management System">
 
+    <ContentPage.Resources>
+        <Style x:Key="ProfileCard" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="White" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextColor" Value="#1A237E" />
+        </Style>
+
+        <Style x:Key="FieldCaption" TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="#607D8B" />
+        </Style>
+
+        <Style x:Key="FieldValue" TargetType="Label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="#212121" />
+        </Style>
+
+        <Style x:Key="ProfileEntry" TargetType="Entry">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="#212121" />
+            <Setter Property="IsReadOnly" Value="True" />
+        </Style>
+    </ContentPage.Resources>
+
     <Grid>
-        <Image 
-            Aspect="AspectFill" 
-            Source="bg.png" />
+        <Image Aspect="AspectFill" Source="bg.png" />
 
-        <Grid RowDefinitions="Auto, *">
-
-            <!-- Header -->
+        <Grid RowDefinitions="Auto,*">
             <Grid
-                BackgroundColor="#CC1A237E"
-                ColumnDefinitions="Auto, *"
-                Padding="10,8">
+                BackgroundColor="#1A237E"
+                ColumnDefinitions="*,Auto,*"
+                Padding="12,8">
 
                 <Button
                     BackgroundColor="Transparent"
                     Clicked="OnBackClicked"
-                    FontAttributes="Bold"
-                    FontSize="14"
+                    HorizontalOptions="Start"
                     Text="← Back"
                     TextColor="#FFC107" />
 
                 <Label
+                    Grid.Column="1"
                     FontAttributes="Bold"
                     FontSize="18"
-                    Grid.Column="1"
-                    HorizontalOptions="Center"
-                    Margin="-40,0,0,0"
                     Text="My Profile"
                     TextColor="White"
                     VerticalOptions="Center" />
-
             </Grid>
 
             <ScrollView Grid.Row="1">
+                <VerticalStackLayout Padding="14,12,14,24" Spacing="12">
 
-                <VerticalStackLayout Padding="14,10" Spacing="10">
-
-                    <!-- Student Profile Header -->
-                    <Frame
-                        BackgroundColor="White"
-                        CornerRadius="12"
-                        HasShadow="True"
-                        Padding="12">
-
-                        <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-
-                            <Frame
-                                BorderColor="#1A237E"
-                                CornerRadius="35"
-                                HasShadow="False"
-                                HeightRequest="70"
-                                IsClippedToBounds="True"
-                                VerticalOptions="Center"
-                                WidthRequest="70">
-
-                                <Image
-                                    Aspect="AspectFill"
-                                    HeightRequest="70"
-                                    Source="student.png"
-                                    WidthRequest="70" />
-                            </Frame>
-
-                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-
-                                <Label
-                                    x:Name="FullNameHeaderLabel"
-                                    FontAttributes="Bold"
-                                    FontSize="17"
-                                    Text="Juan Dela Cruz"
-                                    TextColor="#1A237E" />
-
-                                <Label
-                                    x:Name="StudentIdLabel"
-                                    FontAttributes="Bold"
-                                    FontSize="12"
-                                    Text="Student ID: 2024-00123"
-                                    TextColor="#455A64" />
-
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </Frame>
-
-                    <!-- Academic Information -->
-                    <Frame
-                        BackgroundColor="White"
-                        CornerRadius="12"
-                        HasShadow="True"
-                        Padding="12">
-
-                        <VerticalStackLayout Spacing="6">
+                    <!-- Signed-in student -->
+                    <Border Style="{StaticResource ProfileCard}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label
+                                x:Name="FullNameHeaderLabel"
+                                FontSize="18"
+                                Style="{StaticResource SectionTitle}" />
 
                             <Label
-                                FontAttributes="Bold"
-                                FontSize="14"
-                                Text="Academic Information"
-                                TextColor="#1A237E" />
+                                x:Name="StudentIdLabel"
+                                Style="{StaticResource FieldValue}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Academic information -->
+                    <Border Style="{StaticResource ProfileCard}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label
+                                Style="{StaticResource SectionTitle}"
+                                Text="Academic Information" />
 
                             <Grid
-                                ColumnDefinitions="*, *"
-                                ColumnSpacing="8"
-                                RowDefinitions="Auto, Auto"
-                                RowSpacing="6">
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="12"
+                                RowDefinitions="Auto,Auto"
+                                RowSpacing="10">
 
-                                <VerticalStackLayout>
+                                <VerticalStackLayout Spacing="2">
                                     <Label
-                                        FontSize="11"
-                                        Text="Program"
-                                        TextColor="Gray" />
+                                        x:Name="ProgramCaptionLabel"
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Program" />
 
                                     <Label
                                         x:Name="ProgramLabel"
-                                        FontAttributes="Bold"
-                                        FontSize="13"
-                                        Text="BS Computer Science"
-                                        TextColor="Black" />
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource FieldValue}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Enrollment Status" />
+
+                                    <Label
+                                        x:Name="StatusLabel"
+                                        Style="{StaticResource FieldValue}"
+                                        TextColor="#2E7D32" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="1" Spacing="2">
+                                    <Label
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Year Level" />
+
+                                    <Label
+                                        x:Name="YearLevelLabel"
+                                        Style="{StaticResource FieldValue}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Spacing="2">
+                                    <Label
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Block" />
+
+                                    <Label
+                                        x:Name="BlockLabel"
+                                        Style="{StaticResource FieldValue}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Personal information -->
+                    <Border Style="{StaticResource ProfileCard}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label
+                                Style="{StaticResource SectionTitle}"
+                                Text="Personal Information" />
+
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="12"
+                                RowDefinitions="Auto,Auto,Auto,Auto"
+                                RowSpacing="8">
+
+                                <VerticalStackLayout>
+                                    <Label
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="First Name" />
+                                    <Entry
+                                        x:Name="FirstNameEntry"
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
 
                                 <VerticalStackLayout Grid.Column="1">
                                     <Label
-                                        FontSize="11"
-                                        Text="Enrollment Status"
-                                        TextColor="Gray" />
-
-                                    <Label
-                                        x:Name="StatusLabel"
-                                        FontAttributes="Bold"
-                                        FontSize="13"
-                                        Text="Enrolled"
-                                        TextColor="#2E7D32" />
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Middle Name" />
+                                    <Entry
+                                        x:Name="MiddleNameEntry"
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
 
                                 <VerticalStackLayout Grid.Row="1">
                                     <Label
-                                        FontSize="11"
-                                        Text="Year Level"
-                                        TextColor="Gray" />
-
-                                    <Label
-                                        x:Name="YearLevelLabel"
-                                        FontAttributes="Bold"
-                                        FontSize="13"
-                                        Text="3rd Year"
-                                        TextColor="Black" />
-                                </VerticalStackLayout>
-
-                                <VerticalStackLayout Grid.Column="1" Grid.Row="1">
-                                    <Label
-                                        FontSize="11"
-                                        Text="Block"
-                                        TextColor="Gray" />
-
-                                    <Label
-                                        x:Name="BlockLabel"
-                                        FontAttributes="Bold"
-                                        FontSize="13"
-                                        Text="Block A"
-                                        TextColor="Black" />
-                                </VerticalStackLayout>
-
-                            </Grid>
-                        </VerticalStackLayout>
-                    </Frame>
-
-                    <!-- Personal Information -->
-                    <Frame
-                        BackgroundColor="White"
-                        CornerRadius="12"
-                        HasShadow="True"
-                        Padding="12">
-
-                        <VerticalStackLayout Spacing="6">
-
-                            <Label
-                                FontAttributes="Bold"
-                                FontSize="14"
-                                Text="Personal Information"
-                                TextColor="#1A237E" />
-
-                            <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
-
-                                <VerticalStackLayout>
-                                    <Label
-                                        FontSize="11"
-                                        Text="First Name *"
-                                        TextColor="#455A64" />
-
-                                    <Entry
-                                        x:Name="FirstNameEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Text="Juan"
-                                        TextColor="Black" />
-                                </VerticalStackLayout>
-
-                                <VerticalStackLayout Grid.Column="1">
-                                    <Label
-                                        FontSize="11"
-                                        Text="Middle Name"
-                                        TextColor="#455A64" />
-
-                                    <Entry
-                                        x:Name="MiddleNameEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Text="Santos"
-                                        TextColor="Black" />
-                                </VerticalStackLayout>
-
-                            </Grid>
-
-                            <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
-
-                                <VerticalStackLayout>
-                                    <Label
-                                        FontSize="11"
-                                        Text="Last Name *"
-                                        TextColor="#455A64" />
-
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Last Name" />
                                     <Entry
                                         x:Name="LastNameEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Text="Dela Cruz"
-                                        TextColor="Black" />
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="1">
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="1">
                                     <Label
-                                        FontSize="11"
-                                        Text="Contact Number *"
-                                        TextColor="#455A64" />
-
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Contact Number" />
                                     <Entry
                                         x:Name="ContactEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Keyboard="Telephone"
-                                        MaxLength="11"
-                                        Text="09123456789"
-                                        TextColor="Black" />
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
 
-                            </Grid>
-
-                            <VerticalStackLayout>
-                                <Label
-                                    FontSize="11"
-                                    Text="Email Address *"
-                                    TextColor="#455A64" />
-
-                                <Entry
-                                    x:Name="EmailEntry"
-                                    FontSize="13"
-                                    HeightRequest="38"
-                                    IsEnabled="False"
-                                    Keyboard="Email"
-                                    Text="juan.delacruz@university.edu"
-                                    TextColor="Black" />
-                            </VerticalStackLayout>
-
-                            <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
-
-                                <VerticalStackLayout>
+                                <VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="2">
                                     <Label
-                                        FontSize="11"
-                                        Text="Date of Birth"
-                                        TextColor="#455A64" />
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Email Address" />
+                                    <Entry
+                                        x:Name="EmailEntry"
+                                        Style="{StaticResource ProfileEntry}" />
+                                </VerticalStackLayout>
 
+                                <VerticalStackLayout Grid.Row="3">
+                                    <Label
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Date of Birth" />
                                     <Entry
                                         x:Name="DobEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Text="2004-05-15"
-                                        TextColor="Black" />
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="1">
+                                <VerticalStackLayout Grid.Row="3" Grid.Column="1">
                                     <Label
-                                        FontSize="11"
-                                        Text="Gender"
-                                        TextColor="#455A64" />
-
+                                        Style="{StaticResource FieldCaption}"
+                                        Text="Gender" />
                                     <Entry
                                         x:Name="GenderEntry"
-                                        FontSize="13"
-                                        HeightRequest="38"
-                                        IsEnabled="False"
-                                        Text="Male"
-                                        TextColor="Black" />
+                                        Style="{StaticResource ProfileEntry}" />
                                 </VerticalStackLayout>
-
                             </Grid>
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
 
-                    <!-- Edit and Save Buttons -->
-                    <Grid
-                        ColumnDefinitions="*, *"
-                        ColumnSpacing="10"
-                        Margin="0,2,0,15">
-
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Button
                             x:Name="EditButton"
                             BackgroundColor="#FFC107"
                             Clicked="OnEditClicked"
-                            CornerRadius="8"
-                            FontAttributes="Bold"
-                            FontSize="14"
-                            HeightRequest="42"
+                            IsEnabled="False"
                             Text="Edit Profile"
                             TextColor="#1A237E" />
 
                         <Button
                             x:Name="SaveButton"
+                            Grid.Column="1"
                             BackgroundColor="#2E7D32"
                             Clicked="OnSaveClicked"
-                            CornerRadius="8"
-                            FontAttributes="Bold"
-                            FontSize="14"
-                            Grid.Column="1"
-                            HeightRequest="42"
                             IsEnabled="False"
                             Text="Save Changes"
                             TextColor="White" />
-
                     </Grid>
 
                 </VerticalStackLayout>
