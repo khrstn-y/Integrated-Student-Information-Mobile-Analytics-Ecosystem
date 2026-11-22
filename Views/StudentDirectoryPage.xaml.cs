@@ -1,83 +1,85 @@
-
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using StudentInformationSystemMobile.Models;
+using StudentInformationSystemMobile.Services;
 
 namespace StudentInformationSystemMobile.Views
 {
     public partial class StudentDirectoryPage : ContentPage
     {
-        private ObservableCollection<Student> students;
-        private ObservableCollection<Student> filteredStudents;
+        private readonly DatabaseService databaseService = new();
+        private readonly ObservableCollection<Student> students = new();
+        private readonly ObservableCollection<Student> filteredStudents = new();
+        private bool isLoading;
+        private string searchText = string.Empty;
 
         public StudentDirectoryPage()
         {
             InitializeComponent();
-
-            students = new ObservableCollection<Student>
-            {
-                new Student
-                {
-                    StudentId = "2026-001",
-                    FirstName = "Juan",
-                    LastName = "Dela Cruz",
-                    Program = "BS Computer Science",
-                    YearLevel = "1st Year",
-                    EnrollmentStatus = "Enrolled"
-                },
-                new Student
-                {
-                    StudentId = "2026-002",
-                    FirstName = "Maria",
-                    LastName = "Santos",
-                    Program = "BS Information Technology",
-                    YearLevel = "1st Year",
-                    EnrollmentStatus = "Enrolled"
-                },
-                new Student
-                {
-                    StudentId = "2026-003",
-                    FirstName = "Alex",
-                    LastName = "Reyes",
-                    Program = "BS Computer Science",
-                    YearLevel = "2nd Year",
-                    EnrollmentStatus = "Enrolled"
-                },
-                new Student
-                {
-                    StudentId = "2026-004",
-                    FirstName = "Sofia",
-                    LastName = "Garcia",
-                    Program = "BS Information Technology",
-                    YearLevel = "2nd Year",
-                    EnrollmentStatus = "Enrolled"
-                }
-            };
-
-            filteredStudents = new ObservableCollection<Student>(students);
             StudentsCollectionView.ItemsSource = filteredStudents;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (isLoading || students.Count > 0)
+            {
+                return;
+            }
+
+            isLoading = true;
+
+            try
+            {
+                Student? student = await databaseService.GetDemoStudentAsync();
+
+                if (student is null)
+                {
+                    await DisplayAlertAsync(
+                        "Student Directory",
+                        "The API returned no student record.",
+                        "OK");
+                    return;
+                }
+
+                students.Add(student);
+                ApplySearch();
+            }
+            catch (Exception ex) when (
+                ex is HttpRequestException or TaskCanceledException or JsonException)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
+                await DisplayAlertAsync(
+                    "Could not load student",
+                    "Check that the API is running in PowerShell, then reopen the Student Directory.",
+                    "OK");
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            string searchText = e.NewTextValue?.Trim() ?? string.Empty;
+            searchText = e.NewTextValue?.Trim() ?? string.Empty;
+            ApplySearch();
+        }
 
-            var results = students.Where(student =>
-                student.FullName.Contains(
-                    searchText,
-                    StringComparison.OrdinalIgnoreCase
-                ) ||
-                student.StudentId.Contains(
-                    searchText,
-                    StringComparison.OrdinalIgnoreCase
-                )
-            ).ToList();
-
+        private void ApplySearch()
+        {
             filteredStudents.Clear();
 
-            foreach (Student student in results)
+            foreach (Student student in students)
             {
-                filteredStudents.Add(student);
+                if (student.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    student.StudentId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                {
+                    filteredStudents.Add(student);
+                }
             }
         }
 

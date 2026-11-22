@@ -1,5 +1,4 @@
-﻿
-namespace StudentInformationSystemMobile.Models
+﻿namespace StudentInformationSystemMobile.Models
 {
     public class Student
     {
@@ -14,6 +13,7 @@ namespace StudentInformationSystemMobile.Models
         public string YearLevel { get; set; } = string.Empty;
         public string Block { get; set; } = string.Empty;
         public string Program { get; set; } = string.Empty;
+        public string YearBlockProgram { get; set; } = string.Empty;
         public string ContactNumber { get; set; } = string.Empty;
         public string EnrollmentStatus { get; set; } = string.Empty;
 
@@ -22,6 +22,8 @@ namespace StudentInformationSystemMobile.Models
             $"{FirstName} {MiddleName} {LastName}".Replace("  ", " ").Trim();
 
         public string AcademicSummary =>
-            $"{Program} • {YearLevel}";
+            string.IsNullOrWhiteSpace(Program) || string.IsNullOrWhiteSpace(YearLevel)
+                ? YearBlockProgram
+                : $"{Program} • {YearLevel}";
     }
 }

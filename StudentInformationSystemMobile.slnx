@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="StudentInformationSystemMobile.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
