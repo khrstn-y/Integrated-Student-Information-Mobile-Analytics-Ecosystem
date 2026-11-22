@@ -17,6 +17,7 @@
         public string YearBlockProgram { get; set; } = string.Empty;
         public string ContactNumber { get; set; } = string.Empty;
         public string EnrollmentStatus { get; set; } = string.Empty;
+        public string DirectoryToken { get; set; } = string.Empty;
 
         public string FullName =>
             $"{FirstName} {MiddleName} {LastName}".Replace("  ", " ").Trim();

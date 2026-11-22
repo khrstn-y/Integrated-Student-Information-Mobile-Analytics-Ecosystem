@@ -1,6 +1,10 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using StudentInformationSystemMobile.Models;
 using StudentInformationSystemMobile.Services;
 
@@ -11,6 +15,7 @@ namespace StudentInformationSystemMobile.Views
         private readonly DatabaseService databaseService = new();
         private readonly ObservableCollection<Student> students = new();
         private readonly ObservableCollection<Student> filteredStudents = new();
+
         private bool isLoading;
         private string searchText = string.Empty;
 
@@ -24,8 +29,23 @@ namespace StudentInformationSystemMobile.Views
         {
             base.OnAppearing();
 
-            if (isLoading || students.Count > 0)
+            if (isLoading)
             {
+                return;
+            }
+
+            Student? signedInStudent = StudentSession.Current;
+
+            if (signedInStudent is null ||
+                string.IsNullOrWhiteSpace(signedInStudent.DirectoryToken))
+            {
+                students.Clear();
+                ApplySearch();
+
+                await DisplayAlertAsync(
+                    "Sign In Required",
+                    "Sign in again to open the Student Directory.",
+                    "OK");
                 return;
             }
 
@@ -33,19 +53,33 @@ namespace StudentInformationSystemMobile.Views
 
             try
             {
-                Student? student = await databaseService.GetDemoStudentAsync();
+                var enrolledStudents = await databaseService.GetStudentsAsync(
+                    signedInStudent.DirectoryToken);
 
-                if (student is null)
+                if (!ReferenceEquals(StudentSession.Current, signedInStudent))
                 {
-                    await DisplayAlertAsync(
-                        "Student Directory",
-                        "The API returned no student record.",
-                        "OK");
                     return;
                 }
 
-                students.Add(student);
+                students.Clear();
+
+                foreach (Student student in enrolledStudents)
+                {
+                    students.Add(student);
+                }
+
                 ApplySearch();
+            }
+            catch (HttpRequestException ex) when (
+                ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                students.Clear();
+                ApplySearch();
+
+                await DisplayAlertAsync(
+                    "Session Expired",
+                    "Log out and sign in again to refresh the directory.",
+                    "OK");
             }
             catch (Exception ex) when (
                 ex is HttpRequestException or TaskCanceledException or JsonException)
@@ -53,8 +87,8 @@ namespace StudentInformationSystemMobile.Views
                 System.Diagnostics.Debug.WriteLine(ex);
 
                 await DisplayAlertAsync(
-                    "Could not load student",
-                    "Check that the API is running in PowerShell, then reopen the Student Directory.",
+                    "Could not refresh directory",
+                    "Check that the API is running, then reopen Student Directory.",
                     "OK");
             }
             finally
